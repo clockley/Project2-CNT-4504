@@ -3,7 +3,7 @@
 void runCommand(int newConnection, char **lineptr, size_t *n, const char *cmd) {
     size_t sz = 0;
     FILE * fp = popen(cmd, "r");
-    while ((sz = getline(&lineptr, n, fp) != EOF)) {
+    while ((sz = getline(lineptr, n, fp) != EOF)) {
         while (sz > 0) {
             message_t message = {0};
             if (sz < 448) {
