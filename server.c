@@ -9,7 +9,6 @@ void runCommand(int newConnection, char **lineptr, size_t *n, const char *cmd) {
             if (sz < 448) {
                 strcpy(&message.data, *lineptr);
                 message.size = strlen(&message.data);
-                printf("%s xxx %li\n", *lineptr,  message.size);
                 message.size = sz;
                 sz = 0;
                 write(newConnection, &message, 512);
