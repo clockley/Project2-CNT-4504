@@ -48,6 +48,7 @@ int main() {
     char * lineptr = NULL;
     size_t n = 0, sz = 0;
     while (true) {
+        printf("qqq");
         int tmp = sizeof(addressPort);
         int newConnection = accept(sockfd, (struct sockaddr *)&addressPort, &tmp);
         if (newConnection < 0) {
