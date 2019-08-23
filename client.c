@@ -39,7 +39,7 @@ bool sendCommandAndPrintOutput(char command) {
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
     if (sockfd == -1) {
-        fprintf(stderr, "Unable to allocate socket");
+        fprintf(stderr, "Unable to allocate socket\n");
         return false;
     }
 
@@ -47,13 +47,16 @@ bool sendCommandAndPrintOutput(char command) {
     inet_pton(AF_INET, SERVER_IP, &addressPort.sin_addr);
 
     if (connect(sockfd, (const struct sockaddr *)&addressPort, sizeof(addressPort)) == -1) {
-        fprintf(stderr, "Can't bind....can't continue...");
+        fprintf(stderr, "Can't bind....can't continue...\n");
         return false;
     }
 
     message_t message = {0};
 
-    send(sockfd, &cmd, sizeof(cmd), 0);
+    if (send(sockfd, &cmd, sizeof(cmd), 0) < 0) {
+        fprintf(stderr, "%s\n", strerror(errno));
+        return 1;
+    }
     while (read(sockfd, &message, sizeof(message_t)) != -1) {
         fwrite(message.data, message.size, 1, stdout);
     }
