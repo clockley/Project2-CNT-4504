@@ -33,8 +33,7 @@ int main() {
         return 1;
     }
 
-    struct sockaddr_in addressPort = {.sin_family =  AF_INET, .sin_port = htons(P1_PORT)};
-    inet_pton(AF_INET, SERVER_IP, &addressPort.sin_addr);
+    struct sockaddr_in addressPort = {.sin_family =  AF_INET, .sin_port = htons(P1_PORT), .sin_addr.s_addr = INADDR_ANY};
 
     if (bind(sockfd, (const struct sockaddr *)&addressPort, sizeof(addressPort)) == -1) {
         fprintf(stderr, "Can't bind....can't continue...");

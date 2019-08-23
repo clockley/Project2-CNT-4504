@@ -23,7 +23,7 @@
 #define USERS_CMD        5
 #define RUNNINGPROCS_CMD 6
 #define CMDREPLY         UCHAR_MAX
-#define P1_PORT 4502
+#define P1_PORT 8080
 
 typedef struct  {
     uint64_t size;
