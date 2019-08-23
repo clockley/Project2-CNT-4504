@@ -53,7 +53,7 @@ int main() {
             continue;
         }
         command_t command = { 0 };
-        recv(newConnection, &command, sizeof(uint64_t)+2, 0);
+        recv(newConnection, &command, sizeof(command), 0);
         switch (command.type) {
             case DATE_CMD:
             runCommand(newConnection, lineptr, &n, "date");
