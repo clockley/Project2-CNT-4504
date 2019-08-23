@@ -7,22 +7,23 @@ void runCommand(int newConnection, char **lineptr, size_t *n, const char *cmd) {
         while (sz > 0) {
             message_t message = {0};
             if (sz < 448) {
+                strcpy(&message.data, *lineptr);
+                message.size = strlen(&message.data);
+                printf("%s xxx %li\n", *lineptr,  message.size);
                 message.size = sz;
-                memcpy(message.data, lineptr, sz);
                 sz = 0;
-                send(newConnection, &message, 512, 0);
-                printf("%s\n", message.data);
+                write(newConnection, &message, 512);
             } else {
-                memcpy(message.data, lineptr, 448);
-                lineptr+=448;
+                strcpy(&message.data, *lineptr);
+                *lineptr+=448;
                 sz -= 448;
                 message.size = 448;
                 send(newConnection, &message, 512, MSG_MORE);
-                printf("%s\n", message.data);
             }
         }
     }
     pclose(fp);
+    close(newConnection);
 }
 
 int main() {
@@ -36,7 +37,7 @@ int main() {
     struct sockaddr_in addressPort = {.sin_family =  AF_INET, .sin_port = htons(P1_PORT), .sin_addr.s_addr = INADDR_ANY};
 
     if (bind(sockfd, (const struct sockaddr *)&addressPort, sizeof(addressPort)) == -1) {
-        fprintf(stderr, "Can't bind....can't continue...\n");
+        fprintf(stderr, "%s\n", strerror(errno));
         return 1;
     }
 
@@ -78,7 +79,6 @@ int main() {
                 ;
             break;
         }
-        close(newConnection);
     }
     free(lineptr);
     close(sockfd);

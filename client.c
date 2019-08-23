@@ -46,8 +46,10 @@ bool sendCommandAndPrintOutput(char command) {
     struct sockaddr_in addressPort = {.sin_family =  AF_INET, .sin_port = htons(P1_PORT)};
     inet_pton(AF_INET, SERVER_IP, &addressPort.sin_addr);
 
+    int connection = 0;
+
     if (connect(sockfd, (const struct sockaddr *)&addressPort, sizeof(addressPort)) == -1) {
-        fprintf(stderr, "Can't bind....can't continue...\n");
+        fprintf(stderr, "%s\n", strerror(errno));
         return false;
     }
 
@@ -57,8 +59,8 @@ bool sendCommandAndPrintOutput(char command) {
         fprintf(stderr, "%s\n", strerror(errno));
         return 1;
     }
-    while (read(sockfd, &message, sizeof(message_t)) != -1) {
-        fwrite(message.data, message.size, 1, stdout);
+    while (read(sockfd, &message, sizeof(message_t))  > 0) {
+        printf(&message.data);
     }
     return true;
 }
@@ -67,10 +69,15 @@ int main(void) {
     printMenu();
     long long * tmp = NULL;
     do {
-        long long input = *(tmp = promptForNumber("Please select option: "));
-        free(tmp);
+        long long input = 0;
+        if ((tmp = promptForNumber("Please select option: "))) {
+            input = *tmp;
+        } else {
+            free(tmp);
+        }
         if (input == 7) {
             return 0;
         }
+        sendCommandAndPrintOutput(input);
     } while (true);
 }

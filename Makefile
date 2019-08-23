@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-std=gnu11 -lm -lpthread -flto -O2
+CFLAGS=-std=gnu11 -lm -lpthread -flto -O2 -ggdb
 DEPS = common.h
 
 all: client server

@@ -13,8 +13,8 @@
 #include <inttypes.h>
 #include <string.h>
 
-#define CLIENT_IP "73.148.138.184"
-#define SERVER_IP "63.142.251.9"
+#define CLIENT_IP "127.0.0.1"
+#define SERVER_IP "127.0.0.1"
 
 #define DATE_CMD         1
 #define UPTIME_CMD       2
