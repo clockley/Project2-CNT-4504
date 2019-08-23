@@ -34,9 +34,30 @@ void printMenu(void) {
     }
 }
 
-char * sendCommand(char command) {
+bool sendCommandAndPrintOutput(char command) {
     command_t cmd = {.type = command};
-    return NULL;
+    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+
+    if (sockfd == -1) {
+        fprintf(stderr, "Unable to allocate socket");
+        return false;
+    }
+
+    struct sockaddr_in addressPort = {.sin_family =  AF_INET, .sin_port = htons(P1_PORT)};
+    inet_pton(AF_INET, SERVER_IP, &addressPort.sin_addr);
+
+    if (connect(sockfd, (const struct sockaddr *)&addressPort, sizeof(addressPort)) == -1) {
+        fprintf(stderr, "Can't bind....can't continue...");
+        return false;
+    }
+
+    message_t message = {0};
+
+    send(sockfd, &cmd, sizeof(cmd), 0);
+    while (read(sockfd, &message, sizeof(message_t)) != -1) {
+        fwrite(message.data, message.size, 1, stdout);
+    }
+    return true;
 }
 
 int main(void) {
