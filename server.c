@@ -1,6 +1,6 @@
 #include "common.h"
 
-void runCommand(int newConnection, char *lineptr, size_t *n, const char *cmd) {
+void runCommand(int newConnection, char **lineptr, size_t *n, const char *cmd) {
     size_t sz = 0;
     FILE * fp = popen(cmd, "r");
     while ((sz = getline(&lineptr, n, fp) != EOF)) {
@@ -48,7 +48,6 @@ int main() {
     char * lineptr = NULL;
     size_t n = 0, sz = 0;
     while (true) {
-        printf("qqq");
         int tmp = sizeof(addressPort);
         int newConnection = accept(sockfd, (struct sockaddr *)&addressPort, &tmp);
         if (newConnection < 0) {
@@ -59,22 +58,22 @@ int main() {
         recv(newConnection, &command, sizeof(command), 0);
         switch (command.type) {
             case DATE_CMD:
-            runCommand(newConnection, lineptr, &n, "date");
+            runCommand(newConnection, &lineptr, &n, "date");
             break;
             case UPTIME_CMD:
-            runCommand(newConnection, lineptr, &n, "uptime");
+            runCommand(newConnection, &lineptr, &n, "uptime");
             break;
             case MEMUSE_CMD:
-            runCommand(newConnection, lineptr, &n, "free");
+            runCommand(newConnection, &lineptr, &n, "free");
             break;
             case NETSTAT_CMD:
-            runCommand(newConnection, lineptr, &n, "netstat");
+            runCommand(newConnection, &lineptr, &n, "netstat");
             break;
             case USERS_CMD:
-            runCommand(newConnection, lineptr, &n, "who");
+            runCommand(newConnection, &lineptr, &n, "who");
             break;
             case RUNNINGPROCS_CMD:
-            runCommand(newConnection, lineptr, &n, "ps ax");
+            runCommand(newConnection, &lineptr, &n, "ps ax");
             break;
             default:
                 ;
