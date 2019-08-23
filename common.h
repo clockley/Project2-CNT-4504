@@ -21,6 +21,8 @@
 #define USERS_CMD        5
 #define RUNNINGPROCS_CMD 6
 
+#define P1_PORT 4502
+
 struct command_t {
     unsigned char type;
     char ret;
