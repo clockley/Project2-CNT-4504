@@ -12,16 +12,18 @@ long long * promptForNumber(char * msg) {
             if (*endptr == *lineptr) {
                 printf("Invalid input please try again: ");
                 continue;
-            } else if ((errno == ERANGE && (*ret == LLONG_MAX || *ret == LLONG_MIN)) || (errno != 0 && *ret == 0)) {                
+            } else if ((errno == ERANGE && (*ret == LLONG_MAX || *ret == LLONG_MIN)) || (errno != 0 && *ret == 0)) {
                 printf("Invalid input please try again: ");
                 continue;
             } else {
+                free(lineptr);
                 return ret;
             }
         } else {
             printf("Invalid input please try again: ");
         }
     }
+    free(lineptr);
     return NULL;
 }
 
@@ -39,6 +41,12 @@ char * sendCommand(char command) {
 
 int main(void) {
     printMenu();
-    long long * input = promptForNumber("Please select option: ");
-    free(input);
+    long long * tmp = NULL;
+    do {
+        long long input = *(tmp = promptForNumber("Please select option: "));
+        free(tmp);
+        if (input == 7) {
+            return 0;
+        }
+    } while (true);
 }
