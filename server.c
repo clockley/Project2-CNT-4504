@@ -11,12 +11,14 @@ void runCommand(int newConnection, char *lineptr, size_t *n, const char *cmd) {
                 memcpy(message.data, lineptr, sz);
                 sz = 0;
                 send(newConnection, &message, 512, 0);
+                printf("%s\n", message.data);
             } else {
                 memcpy(message.data, lineptr, 448);
                 lineptr+=448;
                 sz -= 448;
                 message.size = 448;
                 send(newConnection, &message, 512, MSG_MORE);
+                printf("%s\n", message.data);
             }
         }
     }
