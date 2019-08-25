@@ -5,19 +5,19 @@ long long * promptForNumber(char * msg) {
     char *lineptr = NULL;
     char *endptr = NULL;
     size_t n = 0;
-    long long * ret = calloc(1, sizeof(long long));;
+    static long long ret = 0;
     while (getline(&lineptr, &n, stdin) != EOF) {
         errno = 0;
-        if ((*ret = strtoll(lineptr, &endptr, 10))) {
+        if ((ret = strtoll(lineptr, &endptr, 10))) {
             if (*endptr == *lineptr) {
                 printf("Invalid input please try again: ");
                 continue;
-            } else if ((errno == ERANGE && (*ret == LLONG_MAX || *ret == LLONG_MIN)) || (errno != 0 && *ret == 0)) {
+            } else if ((errno == ERANGE && (ret == LLONG_MAX || ret == LLONG_MIN)) || (errno != 0 && ret == 0)) {
                 printf("Invalid input please try again: ");
                 continue;
             } else {
                 free(lineptr);
-                return ret;
+                return &ret;
             }
         } else {
             printf("Invalid input please try again: ");
@@ -72,8 +72,6 @@ int main(void) {
         long long input = 0;
         if ((tmp = promptForNumber("Please select option: "))) {
             input = *tmp;
-        } else {
-            free(tmp);
         }
         if (input == 7) {
             return 0;

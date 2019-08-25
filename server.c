@@ -9,16 +9,15 @@ void runCommand(int newConnection, char **lineptr, size_t *n, const char *cmd) {
             if (sz < 448) {
                 strcpy(&message.data, *lineptr);
                 message.size = strlen(&message.data);
-                printf("%s xxx %li\n", *lineptr,  message.size);
                 message.size = sz;
                 sz = 0;
-                write(newConnection, &message, 512);
+                send(newConnection, &message, 512, MSG_MORE);
             } else {
                 strcpy(&message.data, *lineptr);
                 *lineptr+=448;
                 sz -= 448;
                 message.size = 448;
-                send(newConnection, &message, 512, MSG_MORE);
+                send(newConnection, &message, 512, 0);
             }
         }
     }
@@ -42,7 +41,7 @@ int main() {
     }
 
     if (listen(sockfd, 3) == -1) {
-        fprintf(stderr, "Feeling hard headed... ears on vacation\n");
+        fprintf(stderr, "listen: %s\n", strerror(errno));
         return 1;
     }
     char * lineptr = NULL;
@@ -51,32 +50,34 @@ int main() {
         int tmp = sizeof(addressPort);
         int newConnection = accept(sockfd, (struct sockaddr *)&addressPort, &tmp);
         if (newConnection < 0) {
-            fprintf(stderr, "me no accept\n");
+            fprintf(stderr, "accept: %s\n", strerror(errno));
             continue;
+        } else {
+            fprintf(stderr, "accepting a new connection\n");
         }
         command_t command = { 0 };
         recv(newConnection, &command, sizeof(command), 0);
         switch (command.type) {
             case DATE_CMD:
-            runCommand(newConnection, &lineptr, &n, "date");
+                runCommand(newConnection, &lineptr, &n, "date");
             break;
             case UPTIME_CMD:
-            runCommand(newConnection, &lineptr, &n, "uptime");
+                runCommand(newConnection, &lineptr, &n, "uptime");
             break;
             case MEMUSE_CMD:
-            runCommand(newConnection, &lineptr, &n, "free");
+                runCommand(newConnection, &lineptr, &n, "free");
             break;
             case NETSTAT_CMD:
-            runCommand(newConnection, &lineptr, &n, "netstat");
+                runCommand(newConnection, &lineptr, &n, "netstat");
             break;
             case USERS_CMD:
-            runCommand(newConnection, &lineptr, &n, "who");
+                runCommand(newConnection, &lineptr, &n, "who");
             break;
             case RUNNINGPROCS_CMD:
-            runCommand(newConnection, &lineptr, &n, "ps ax");
+                runCommand(newConnection, &lineptr, &n, "ps ax");
             break;
             default:
-                ;
+                fprintf(stderr, "Invalid command");;
             break;
         }
     }
