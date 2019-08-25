@@ -95,7 +95,6 @@ int main(void) {
         *numberOfconcurrentRequest = tmp;
     }
 
-
     ThreadPoolNew();
 
     long long * tmp = NULL;
@@ -105,6 +104,8 @@ int main(void) {
         long long input = 0;
         if ((tmp = promptForNumber("Please select option: "))) {
             input = *tmp;
+        } else {
+            break;
         }
         if (input == 7) {
             return 0;
@@ -115,7 +116,6 @@ int main(void) {
         for (__auto_type  i = *numberOfconcurrentRequest; i > 0; --i) {
             ThreadPoolAddTask(sendCommandAndPrintOutput, (void*)input, true);
         }
-
 
         for (__auto_type  i = *numberOfconcurrentRequest; i > 0; --i) {
             char tmp = 0;

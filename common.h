@@ -13,6 +13,7 @@
 #include <arpa/inet.h>
 #include <inttypes.h>
 #include <string.h>
+#include <signal.h>
 
 #define CLIENT_IP "127.0.0.1"
 #define SERVER_IP "127.0.0.1"

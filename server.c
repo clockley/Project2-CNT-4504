@@ -27,6 +27,8 @@ void runCommand(int newConnection, char **lineptr, size_t *n, const char *cmd) {
 
 int main() {
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    int option = 1;
+    setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
 
     if (sockfd == -1) {
         fprintf(stderr, "Unable to allocate socket\n");
