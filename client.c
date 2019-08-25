@@ -10,7 +10,7 @@ long long * promptForNumber(char * msg) {
     size_t n = 0;
     static long long ret = 0;
     while (getline(&lineptr, &n, stdin) != EOF) {
-        fflush(NULL);
+        fflush(stdout);
         errno = 0;
         if ((ret = strtoll(lineptr, &endptr, 10))) {
             if (*endptr == *lineptr) {
@@ -72,10 +72,9 @@ void * sendCommandAndPrintOutput(void * arg) {
     fclose(output);
     flockfile(stdout);
     fputs_unlocked(ptr, stdout);
-    fflush_unlocked(NULL);
+    fflush_unlocked(stdout);
     funlockfile(stdout);
     free(ptr);
-    fflush(NULL);
     char tmp = 0;
     write(com[1], &tmp, sizeof(tmp));
     return NULL;
