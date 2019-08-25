@@ -62,6 +62,7 @@ bool sendCommandAndPrintOutput(char command) {
     while (read(sockfd, &message, sizeof(message_t))  > 0) {
         printf(&message.data);
     }
+    fflush(NULL);
     return true;
 }
 

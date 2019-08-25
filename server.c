@@ -6,18 +6,18 @@ void runCommand(int newConnection, char **lineptr, size_t *n, const char *cmd) {
     while ((sz = getline(lineptr, n, fp) != EOF)) {
         while (sz > 0) {
             message_t message = {0};
-            if (sz < 448) {
+            if (sz < sizeof(message.data)) {
                 strcpy(&message.data, *lineptr);
                 message.size = strlen(&message.data);
                 message.size = sz;
                 sz = 0;
-                send(newConnection, &message, 512, MSG_MORE);
+                send(newConnection, &message, sizeof(message), MSG_MORE);
             } else {
                 strcpy(&message.data, *lineptr);
-                *lineptr+=448;
-                sz -= 448;
-                message.size = 448;
-                send(newConnection, &message, 512, 0);
+                *lineptr+=sizeof(message.data);
+                sz -= sizeof(message.data);
+                message.size = sizeof(message.data);
+                send(newConnection, &message, sizeof(message), 0);
             }
         }
     }
