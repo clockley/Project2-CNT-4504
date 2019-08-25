@@ -40,7 +40,7 @@ int main() {
         return 1;
     }
 
-    if (listen(sockfd, 3) == -1) {
+    if (listen(sockfd, 100) == -1) {
         fprintf(stderr, "listen: %s\n", strerror(errno));
         return 1;
     }

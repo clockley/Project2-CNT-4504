@@ -1,6 +1,8 @@
 #include "common.h"
 #include "pool.c"
 
+int com[2] = {0};
+
 long long * promptForNumber(char * msg) {
     printf("%s", msg);
     char *lineptr = NULL;
@@ -8,13 +10,16 @@ long long * promptForNumber(char * msg) {
     size_t n = 0;
     static long long ret = 0;
     while (getline(&lineptr, &n, stdin) != EOF) {
+        fflush(NULL);
         errno = 0;
         if ((ret = strtoll(lineptr, &endptr, 10))) {
             if (*endptr == *lineptr) {
                 printf("Invalid input please try again: ");
+                printf("%s", msg);
                 continue;
             } else if ((errno == ERANGE && (ret == LLONG_MAX || ret == LLONG_MIN)) || (errno != 0 && ret == 0)) {
                 printf("Invalid input please try again: ");
+                printf("%s", msg);
                 continue;
             } else {
                 free(lineptr);
@@ -35,13 +40,13 @@ void printMenu(void) {
     }
 }
 
-bool sendCommandAndPrintOutput(char command) {
-    command_t cmd = {.type = command};
+void * sendCommandAndPrintOutput(void * arg) {
+
+    command_t cmd = {.type = (char)arg};
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
     if (sockfd == -1) {
-        fprintf(stderr, "Unable to allocate socket\n");
-        return false;
+        return strerror(errno);
     }
 
     struct sockaddr_in addressPort = {.sin_family =  AF_INET, .sin_port = htons(P1_PORT)};
@@ -50,27 +55,54 @@ bool sendCommandAndPrintOutput(char command) {
     int connection = 0;
 
     if (connect(sockfd, (const struct sockaddr *)&addressPort, sizeof(addressPort)) == -1) {
-        fprintf(stderr, "%s\n", strerror(errno));
-        return false;
+        return strerror(errno);
     }
 
     message_t message = {0};
 
     if (send(sockfd, &cmd, sizeof(cmd), 0) < 0) {
-        fprintf(stderr, "%s\n", strerror(errno));
-        return 1;
+        return strerror(errno);
     }
+    char *ptr = NULL;
+    size_t sizeloc = 0;
+    FILE * output = open_memstream(&ptr, &sizeloc);
     while (read(sockfd, &message, sizeof(message_t))  > 0) {
-        printf(&message.data);
+        fputs_unlocked(&message.data, output);
     }
+    fclose(output);
+    flockfile(stdout);
+    fputs_unlocked(ptr, stdout);
+    fflush_unlocked(NULL);
+    funlockfile(stdout);
+    free(ptr);
     fflush(NULL);
-    return true;
+    char tmp = 0;
+    write(com[1], &tmp, sizeof(tmp));
+    return NULL;
 }
 
 int main(void) {
-    printMenu();
+    _Atomic(long long *) numberOfconcurrentRequest = NULL;
+    do {
+        numberOfconcurrentRequest = promptForNumber("Enter number of concurrent request: ");
+        if (numberOfconcurrentRequest != NULL && *numberOfconcurrentRequest <= 0) {
+            printf("Invalid input please try again\n");
+            numberOfconcurrentRequest = NULL;
+        }
+    } while (numberOfconcurrentRequest == NULL);
+    {
+        __auto_type tmp = *numberOfconcurrentRequest;
+        numberOfconcurrentRequest = malloc(sizeof(*numberOfconcurrentRequest));
+        *numberOfconcurrentRequest = tmp;
+    }
+
+
+    ThreadPoolNew();
+
     long long * tmp = NULL;
     do {
+        fflush(stdout);
+        printMenu();
         long long input = 0;
         if ((tmp = promptForNumber("Please select option: "))) {
             input = *tmp;
@@ -78,6 +110,20 @@ int main(void) {
         if (input == 7) {
             return 0;
         }
-        sendCommandAndPrintOutput(input);
+
+        pipe(com);
+
+        for (__auto_type  i = *numberOfconcurrentRequest; i > 0; --i) {
+            ThreadPoolAddTask(sendCommandAndPrintOutput, (void*)input, true);
+        }
+
+
+        for (__auto_type  i = *numberOfconcurrentRequest; i > 0; --i) {
+            char tmp = 0;
+            read(com[0], &tmp, sizeof(tmp));
+        }
+
     } while (true);
+
+    ThreadPoolCancel();
 }
