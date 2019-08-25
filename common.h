@@ -22,7 +22,7 @@
 #define NETSTAT_CMD      4
 #define USERS_CMD        5
 #define RUNNINGPROCS_CMD 6
-#define CMDREPLY         UCHAR_MAX
+#define CMDREPLY         0
 #define P1_PORT 8080
 
 typedef struct  {
