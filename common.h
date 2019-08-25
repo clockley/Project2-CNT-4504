@@ -27,7 +27,7 @@
 
 typedef struct  {
     uint64_t size;
-    char data[1216];
+    char data[1280-sizeof(uint64_t)];
 } message_t;
 
 struct command_t {
