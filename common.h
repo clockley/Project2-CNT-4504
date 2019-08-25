@@ -14,6 +14,7 @@
 #include <inttypes.h>
 #include <string.h>
 #include <signal.h>
+#include <sys/time.h>
 
 #define CLIENT_IP "127.0.0.1"
 #define SERVER_IP "127.0.0.1"
@@ -38,4 +39,19 @@ struct command_t {
 };
 
 typedef struct command_t command_t;
+
+static uint64_t getTimestampInMicroseconds(struct timespec * start, struct timespec * end) {
+	struct timespec tmp;
+	if (end->tv_nsec-start->tv_nsec < 0) {
+		tmp.tv_sec = end->tv_sec-start->tv_sec-1;
+		tmp.tv_nsec = 1000000000+end->tv_nsec-start->tv_nsec;
+	} else {
+		tmp.tv_sec = end->tv_sec-start->tv_sec;
+		tmp.tv_nsec = end->tv_nsec-start->tv_nsec;
+	}
+    struct timeval tv;
+    TIMESPEC_TO_TIMEVAL(&tv,  &tmp);
+	return 1000000 * tv.tv_sec + tv.tv_usec;
+}
+
 #endif

@@ -2,6 +2,7 @@
 #include "pool.c"
 
 int com[2] = {0};
+long long * numberOfconcurrentRequest;
 
 long long * promptForNumber(char * msg) {
     printf("%s", msg);
@@ -53,6 +54,8 @@ void * sendCommandAndPrintOutput(void * arg) {
     inet_pton(AF_INET, SERVER_IP, &addressPort.sin_addr);
 
     int connection = 0;
+    struct timespec t1, t2;
+    clock_gettime(CLOCK_MONOTONIC_COARSE, &t1);
 
     if (connect(sockfd, (const struct sockaddr *)&addressPort, sizeof(addressPort)) == -1) {
         return strerror(errno);
@@ -69,10 +72,14 @@ void * sendCommandAndPrintOutput(void * arg) {
     while (read(sockfd, &message, sizeof(message_t))  > 0) {
         fputs_unlocked(&message.data, output);
     }
+    clock_gettime(CLOCK_MONOTONIC_COARSE, &t2);
     fclose(output);
     flockfile(stdout);
     fputs_unlocked(ptr, stdout);
     fflush_unlocked(stdout);
+    FILE * bench = fopen("bench.txt", "a+");
+    fprintf(bench, "Time:\t%lu;Command:\t%c;ClientCount:\t%lli\n", getTimestampInMicroseconds(&t1, &t2), cmd.type, *numberOfconcurrentRequest);
+    fclose(bench);
     funlockfile(stdout);
     free(ptr);
     char tmp = 0;
@@ -81,7 +88,7 @@ void * sendCommandAndPrintOutput(void * arg) {
 }
 
 int main(void) {
-    _Atomic(long long *) numberOfconcurrentRequest = NULL;
+    numberOfconcurrentRequest = NULL;
     do {
         numberOfconcurrentRequest = promptForNumber("Enter number of concurrent request: ");
         if (numberOfconcurrentRequest != NULL && *numberOfconcurrentRequest <= 0) {
