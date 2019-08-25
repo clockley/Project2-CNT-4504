@@ -59,22 +59,22 @@ int main() {
         recv(newConnection, &command, sizeof(command), 0);
         switch (command.type) {
             case DATE_CMD:
-                runCommand(newConnection, &lineptr, &n, "date");
+                runCommand(newConnection, &lineptr, &n, "exec date");
             break;
             case UPTIME_CMD:
-                runCommand(newConnection, &lineptr, &n, "uptime");
+                runCommand(newConnection, &lineptr, &n, "exec uptime");
             break;
             case MEMUSE_CMD:
-                runCommand(newConnection, &lineptr, &n, "free");
+                runCommand(newConnection, &lineptr, &n, "exec free");
             break;
             case NETSTAT_CMD:
-                runCommand(newConnection, &lineptr, &n, "netstat");
+                runCommand(newConnection, &lineptr, &n, "exec netstat");
             break;
             case USERS_CMD:
-                runCommand(newConnection, &lineptr, &n, "who");
+                runCommand(newConnection, &lineptr, &n, "exec who");
             break;
             case RUNNINGPROCS_CMD:
-                runCommand(newConnection, &lineptr, &n, "ps ax");
+                runCommand(newConnection, &lineptr, &n, "exec ps ax");
             break;
             default:
                 fprintf(stderr, "Invalid command");;
