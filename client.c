@@ -1,4 +1,5 @@
 #include "common.h"
+#include "pool.c"
 
 long long * promptForNumber(char * msg) {
     printf("%s", msg);
