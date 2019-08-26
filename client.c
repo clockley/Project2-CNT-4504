@@ -102,6 +102,8 @@ int main(void) {
         *numberOfconcurrentRequest = tmp;
     }
 
+    pipe(com);
+
     ThreadPoolNew();
 
     long long * tmp = NULL;
@@ -117,8 +119,6 @@ int main(void) {
         if (input == 7) {
             return 0;
         }
-
-        pipe(com);
 
         for (__auto_type  i = *numberOfconcurrentRequest; i > 0; --i) {
             ThreadPoolAddTask(sendCommandAndPrintOutput, (void*)input, true);
