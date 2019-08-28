@@ -8,7 +8,6 @@ void runCommand(int newConnection, char **lineptr, size_t *n, const char *cmd) {
             message_t message = {0};
             if (sz < sizeof(message.data)) {
                 strcpy(&message.data, *lineptr);
-                message.size = strlen(&message.data);
                 message.size = sz;
                 sz = 0;
                 send(newConnection, &message, sizeof(message), MSG_MORE);
