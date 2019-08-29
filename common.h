@@ -16,8 +16,8 @@
 #include <signal.h>
 #include <sys/time.h>
 
-#define CLIENT_IP "192.168.101.109"
-#define SERVER_IP "192.168.101.108"
+#define CLIENT_IP "127.0.0.1"
+#define SERVER_IP "127.0.0.1"
 
 #define DATE_CMD         1
 #define UPTIME_CMD       2
@@ -26,7 +26,7 @@
 #define USERS_CMD        5
 #define RUNNINGPROCS_CMD 6
 #define CMDREPLY         0
-#define P1_PORT 65535
+#define P1_PORT 8080
 
 typedef struct  {
     uint64_t size;
