@@ -55,7 +55,6 @@ void * sendCommandAndPrintOutput(void * arg) {
 
     int connection = 0;
     struct timespec t1, t2;
-    clock_gettime(CLOCK_MONOTONIC_COARSE, &t1);
 
     if (connect(sockfd, (const struct sockaddr *)&addressPort, sizeof(addressPort)) == -1) {
         return strerror(errno);
@@ -63,6 +62,8 @@ void * sendCommandAndPrintOutput(void * arg) {
 
     message_t message = {0};
 
+    clock_gettime(CLOCK_MONOTONIC_COARSE, &t1);
+    
     if (send(sockfd, &cmd, sizeof(cmd), 0) < 0) {
         return strerror(errno);
     }
