@@ -54,4 +54,14 @@ static uint64_t getTimestampInMicroseconds(struct timespec * start, struct times
 	return 1000000 * tv.tv_sec + tv.tv_usec;
 }
 
+
+struct timespec diffTimespec(struct timespec start, struct timespec end)
+{
+	if ((end.tv_nsec-start.tv_nsec) < 0) {
+		return (struct timespec) {end.tv_sec-start.tv_sec-1, 1000000000+end.tv_nsec-start.tv_nsec};
+	} else {
+		return (struct timespec) {end.tv_sec-start.tv_sec, end.tv_nsec-start.tv_nsec};
+	}
+}
+
 #endif

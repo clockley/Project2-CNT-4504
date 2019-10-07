@@ -79,7 +79,7 @@ void * sendCommandAndPrintOutput(void * arg) {
     fputs_unlocked(ptr, stdout);
     fflush_unlocked(stdout);
     FILE * bench = fopen("bench.txt", "a+");
-    fprintf(bench, "Time:\t%lu;Command:\t%c;ClientCount:\t%lli\n", getTimestampInMicroseconds(&t1, &t2), cmd.type, *numberOfconcurrentRequest);
+    fprintf(bench, "Time:\t%lu:%lu;Command:\t%c;ClientCount:\t%lli\n", diffTimespec(t1, t2).tv_sec, diffTimespec(t1, t2).tv_nsec, cmd.type, *numberOfconcurrentRequest);
     fclose(bench);
     funlockfile(stdout);
     free(ptr);
