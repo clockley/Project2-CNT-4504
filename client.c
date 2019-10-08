@@ -117,9 +117,13 @@ int main(void) {
         } else {
             break;
         }
+
         if (input == 7) {
             return 0;
         }
+
+	if (input > 7)
+		continue;
 
         for (__auto_type  i = *numberOfconcurrentRequest; i > 0; --i) {
             ThreadPoolAddTask(sendCommandAndPrintOutput, (void*)input, true);
