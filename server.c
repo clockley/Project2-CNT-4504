@@ -106,7 +106,7 @@ int main() {
                 if (USE_THREADS) {
                     pthread_t thread;
                     pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec netstat"});
-                    __sync_synchronize();
+
                 } else {
                     runCommand(&(struct connection){newConnection, "exec netstat"});
                 }
