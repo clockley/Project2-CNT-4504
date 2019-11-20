@@ -1,13 +1,14 @@
 #include "common.h"
+#include <pthread.h>
 
 struct connection {
     int handle;
     char *type;
 };
 
-void runCommand(struct connection c) {
-    int newConnection = c.handle;
-    const char *cmd = c.type;
+void * runCommand(struct connection * c) {
+    int newConnection = c->handle;
+    const char *cmd = c->type;
     char *lineptr = NULL;
     size_t n = 0;
     size_t sz = 0;
@@ -32,6 +33,7 @@ void runCommand(struct connection c) {
     free(lineptr);
     pclose(fp);
     close(newConnection);
+    return NULL;
 }
 
 int main() {
@@ -69,22 +71,52 @@ int main() {
         recv(newConnection, &command, sizeof(command), 0);
         switch (command.type) {
             case DATE_CMD:
-                runCommand((struct connection){newConnection, "exec date"});
+            {
+                pthread_t thread;
+                pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec date"});
+                pthread_detach(thread);
+                __sync_synchronize();
+            }
             break;
             case UPTIME_CMD:
-                runCommand((struct connection){newConnection, "exec uptime"});
+            {
+                pthread_t thread;
+                pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec uptime"});
+                pthread_detach(thread);
+                __sync_synchronize();
+            }
             break;
             case MEMUSE_CMD:
-                runCommand((struct connection){newConnection, "exec free"});
+            {
+                pthread_t thread;
+                pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec free"});
+                pthread_detach(thread);
+                __sync_synchronize();
+            }
             break;
             case NETSTAT_CMD:
-                runCommand((struct connection){newConnection, "exec netstat"});
+            {
+                pthread_t thread;
+                pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec netstat"});
+                pthread_detach(thread);
+                __sync_synchronize();
+            }
             break;
             case USERS_CMD:
-                runCommand((struct connection){newConnection, "exec who"});
+            {
+                pthread_t thread;
+                pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec who"});
+                pthread_detach(thread);
+                __sync_synchronize();
+            }
             break;
             case RUNNINGPROCS_CMD:
-                runCommand((struct connection){newConnection, "exec ps ax"});
+            {
+                pthread_t thread;
+                pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec ps ax"});
+                pthread_detach(thread);
+                __sync_synchronize();
+            }
             break;
             default:
                 fprintf(stderr, "Invalid command");;
