@@ -72,7 +72,7 @@ int main() {
         switch (command.type) {
             case DATE_CMD:
             {
-                static pthread_t thread;
+                pthread_t thread;
                 pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec date"});
                 pthread_detach(thread);
                 __sync_synchronize();
@@ -80,7 +80,7 @@ int main() {
             break;
             case UPTIME_CMD:
             {
-                static pthread_t thread;
+                pthread_t thread;
                 pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec uptime"});
                 pthread_detach(thread);
                 __sync_synchronize();
@@ -88,7 +88,7 @@ int main() {
             break;
             case MEMUSE_CMD:
             {
-                static pthread_t thread;
+                pthread_t thread;
                 pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec free"});
                 pthread_detach(thread);
                 __sync_synchronize();
@@ -96,7 +96,7 @@ int main() {
             break;
             case NETSTAT_CMD:
             {
-                static pthread_t thread;
+                pthread_t thread;
                 pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec netstat"});
                 pthread_detach(thread);
                 __sync_synchronize();
@@ -104,7 +104,7 @@ int main() {
             break;
             case USERS_CMD:
             {
-                static pthread_t thread;
+                pthread_t thread;
                 pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec who"});
                 pthread_detach(thread);
                 __sync_synchronize();
@@ -112,7 +112,7 @@ int main() {
             break;
             case RUNNINGPROCS_CMD:
             {
-                static pthread_t thread;
+                pthread_t thread;
                 pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec ps ax"});
                 pthread_detach(thread);
                 __sync_synchronize();
