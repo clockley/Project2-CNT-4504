@@ -1,6 +1,13 @@
 #include "common.h"
 
-void runCommand(int newConnection, const char *cmd) {
+struct connection {
+    int handle;
+    char *type;
+};
+
+void runCommand(struct connection c) {
+    int newConnection = c.handle;
+    const char *cmd = c.type;
     char *lineptr = NULL;
     size_t n = 0;
     size_t sz = 0;
@@ -62,22 +69,22 @@ int main() {
         recv(newConnection, &command, sizeof(command), 0);
         switch (command.type) {
             case DATE_CMD:
-                runCommand(newConnection, "exec date");
+                runCommand((struct connection){newConnection, "exec date"});
             break;
             case UPTIME_CMD:
-                runCommand(newConnection, "exec uptime");
+                runCommand((struct connection){newConnection, "exec uptime"});
             break;
             case MEMUSE_CMD:
-                runCommand(newConnection, "exec free");
+                runCommand((struct connection){newConnection, "exec free"});
             break;
             case NETSTAT_CMD:
-                runCommand(newConnection, "exec netstat");
+                runCommand((struct connection){newConnection, "exec netstat"});
             break;
             case USERS_CMD:
-                runCommand(newConnection, "exec who");
+                runCommand((struct connection){newConnection, "exec who"});
             break;
             case RUNNINGPROCS_CMD:
-                runCommand(newConnection, "exec ps ax");
+                runCommand((struct connection){newConnection, "exec ps ax"});
             break;
             default:
                 fprintf(stderr, "Invalid command");;
