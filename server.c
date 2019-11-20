@@ -1,5 +1,6 @@
 #include "common.h"
 #include <pthread.h>
+static const bool USE_THREADS = true;
 
 struct connection {
     int handle;
@@ -80,42 +81,62 @@ int main() {
             break;
             case UPTIME_CMD:
             {
-                pthread_t thread;
-                pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec uptime"});
-                pthread_detach(thread);
-                __sync_synchronize();
+                if (USE_THREADS) {
+                    pthread_t thread;
+                    pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec uptime"});
+                    pthread_detach(thread);
+                    __sync_synchronize();
+                } else {
+                    runCommand(&(struct connection){newConnection, "exec uptime"});
+                }
             }
             break;
             case MEMUSE_CMD:
             {
-                pthread_t thread;
-                pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec free"});
-                pthread_detach(thread);
-                __sync_synchronize();
+                if (USE_THREADS) {
+                    pthread_t thread;
+                    pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec free"});
+                    pthread_detach(thread);
+                    __sync_synchronize();
+                } else {
+                    runCommand(&(struct connection){newConnection, "exec free"});
+                }
             }
             break;
             case NETSTAT_CMD:
             {
-                pthread_t thread;
-                pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec netstat"});
-                pthread_detach(thread);
-                __sync_synchronize();
+                if (USE_THREADS) {
+                    pthread_t thread;
+                    pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec netstat"});
+                    pthread_detach(thread);
+                    __sync_synchronize();
+                } else {
+                    runCommand(&(struct connection){newConnection, "exec netstat"});
+                }
             }
             break;
             case USERS_CMD:
             {
-                pthread_t thread;
-                pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec who"});
-                pthread_detach(thread);
-                __sync_synchronize();
+                if (USE_THREADS) {
+                    pthread_t thread;
+                    pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec who"});
+                    pthread_detach(thread);
+                    __sync_synchronize();
+                } else {
+                    runCommand(&(struct connection){newConnection, "exec who"});
+                }
             }
             break;
             case RUNNINGPROCS_CMD:
             {
-                pthread_t thread;
-                pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec ps ax"});
-                pthread_detach(thread);
-                __sync_synchronize();
+                if (USE_THREADS) {
+                    pthread_t thread;
+                    pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec ps ax"});
+                    pthread_detach(thread);
+                    __sync_synchronize();
+                } else {
+                    runCommand(&(struct connection){newConnection, "exec ps ax"});
+                }
             }
             break;
             default:
