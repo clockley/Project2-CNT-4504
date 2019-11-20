@@ -31,9 +31,10 @@ void * runCommand(struct connection * c) {
             }
         }
     }
+    close(newConnection);
     free(lineptr);
     pclose(fp);
-    close(newConnection);
+    pthread_detach(pthread_self());
     return NULL;
 }
 
@@ -75,7 +76,6 @@ int main() {
             {
                 pthread_t thread;
                 pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec date"});
-                pthread_detach(thread);
                 __sync_synchronize();
             }
             break;
@@ -84,7 +84,6 @@ int main() {
                 if (USE_THREADS) {
                     pthread_t thread;
                     pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec uptime"});
-                    pthread_detach(thread);
                     __sync_synchronize();
                 } else {
                     runCommand(&(struct connection){newConnection, "exec uptime"});
@@ -96,7 +95,6 @@ int main() {
                 if (USE_THREADS) {
                     pthread_t thread;
                     pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec free"});
-                    pthread_detach(thread);
                     __sync_synchronize();
                 } else {
                     runCommand(&(struct connection){newConnection, "exec free"});
@@ -108,7 +106,6 @@ int main() {
                 if (USE_THREADS) {
                     pthread_t thread;
                     pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec netstat"});
-                    pthread_detach(thread);
                     __sync_synchronize();
                 } else {
                     runCommand(&(struct connection){newConnection, "exec netstat"});
@@ -120,7 +117,6 @@ int main() {
                 if (USE_THREADS) {
                     pthread_t thread;
                     pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec who"});
-                    pthread_detach(thread);
                     __sync_synchronize();
                 } else {
                     runCommand(&(struct connection){newConnection, "exec who"});
@@ -131,11 +127,10 @@ int main() {
             {
                 if (USE_THREADS) {
                     pthread_t thread;
-                    pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec ps ax"});
-                    pthread_detach(thread);
+                    pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec free"});
                     __sync_synchronize();
                 } else {
-                    runCommand(&(struct connection){newConnection, "exec ps ax"});
+                    runCommand(&(struct connection){newConnection, "exec free"});
                 }
             }
             break;
