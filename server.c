@@ -76,7 +76,6 @@ int main() {
             {
                 pthread_t thread;
                 pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec date"});
-                __sync_synchronize();
             }
             break;
             case UPTIME_CMD:
@@ -84,7 +83,6 @@ int main() {
                 if (USE_THREADS) {
                     pthread_t thread;
                     pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec uptime"});
-                    __sync_synchronize();
                 } else {
                     runCommand(&(struct connection){newConnection, "exec uptime"});
                 }
@@ -95,7 +93,6 @@ int main() {
                 if (USE_THREADS) {
                     pthread_t thread;
                     pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec free"});
-                    __sync_synchronize();
                 } else {
                     runCommand(&(struct connection){newConnection, "exec free"});
                 }
@@ -117,7 +114,6 @@ int main() {
                 if (USE_THREADS) {
                     pthread_t thread;
                     pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec who"});
-                    __sync_synchronize();
                 } else {
                     runCommand(&(struct connection){newConnection, "exec who"});
                 }
@@ -128,7 +124,6 @@ int main() {
                 if (USE_THREADS) {
                     pthread_t thread;
                     pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec free"});
-                    __sync_synchronize();
                 } else {
                     runCommand(&(struct connection){newConnection, "exec free"});
                 }
