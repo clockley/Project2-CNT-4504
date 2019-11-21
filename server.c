@@ -31,10 +31,10 @@ void * runCommand(struct connection * c) {
             }
         }
     }
-    close(newConnection);
-    free(lineptr);
+
     pclose(fp);
-    pthread_detach(pthread_self());
+    close(newConnection);
+        free(lineptr);
     return NULL;
 }
 
@@ -74,15 +74,17 @@ int main() {
         switch (command.type) {
             case DATE_CMD:
             {
-                pthread_t thread;
+                static pthread_t thread;
                 pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec date"});
+                pthread_detach(thread);
             }
             break;
             case UPTIME_CMD:
             {
                 if (USE_THREADS) {
-                    pthread_t thread;
+                    static pthread_t thread;
                     pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec uptime"});
+                    pthread_detach(thread);
                 } else {
                     runCommand(&(struct connection){newConnection, "exec uptime"});
                 }
@@ -91,8 +93,9 @@ int main() {
             case MEMUSE_CMD:
             {
                 if (USE_THREADS) {
-                    pthread_t thread;
+                    static pthread_t thread;
                     pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec free"});
+                    pthread_detach(thread);
                 } else {
                     runCommand(&(struct connection){newConnection, "exec free"});
                 }
@@ -101,9 +104,9 @@ int main() {
             case NETSTAT_CMD:
             {
                 if (USE_THREADS) {
-                    pthread_t thread;
+                    static pthread_t thread;
                     pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec netstat"});
-
+                    pthread_detach(thread);
                 } else {
                     runCommand(&(struct connection){newConnection, "exec netstat"});
                 }
@@ -112,8 +115,9 @@ int main() {
             case USERS_CMD:
             {
                 if (USE_THREADS) {
-                    pthread_t thread;
+                    static pthread_t thread;
                     pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec who"});
+                    pthread_detach(thread);
                 } else {
                     runCommand(&(struct connection){newConnection, "exec who"});
                 }
@@ -122,8 +126,9 @@ int main() {
             case RUNNINGPROCS_CMD:
             {
                 if (USE_THREADS) {
-                    pthread_t thread;
+                    static pthread_t thread;
                     pthread_create(&thread, NULL, runCommand, &(struct connection){newConnection, "exec free"});
+                    pthread_detach(thread);
                 } else {
                     runCommand(&(struct connection){newConnection, "exec free"});
                 }
