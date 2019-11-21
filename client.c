@@ -1,9 +1,8 @@
 #include "common.h"
 #include "pool.c"
 
-int com[2] = {0};
 long long * numberOfconcurrentRequest;
-
+pthread_barrier_t b;
 long long * promptForNumber(char * msg) {
     printf("%s", msg);
     char *lineptr = NULL;
@@ -84,7 +83,8 @@ void * sendCommandAndPrintOutput(void * arg) {
     funlockfile(stdout);
     free(ptr);
     char tmp = 0;
-    write(com[1], &tmp, sizeof(tmp));
+    pthread_barrier_wait(&b);
+
     return NULL;
 }
 
@@ -103,12 +103,11 @@ int main(void) {
         *numberOfconcurrentRequest = tmp;
     }
 
-    pipe(com);
-
     ThreadPoolNew();
 
     long long * tmp = NULL;
     do {
+        pthread_barrier_init(&b, NULL, (*numberOfconcurrentRequest)+1);
         fflush(stdout);
         printMenu();
         long long input = 0;
@@ -128,11 +127,8 @@ int main(void) {
         for (__auto_type  i = *numberOfconcurrentRequest; i > 0; --i) {
             ThreadPoolAddTask(sendCommandAndPrintOutput, (void*)input, true);
         }
-
-        for (__auto_type  i = *numberOfconcurrentRequest; i > 0; --i) {
-            char tmp = 0;
-            read(com[0], &tmp, sizeof(tmp));
-        }
+        pthread_barrier_wait(&b);
+        pthread_barrier_destroy(&b);
 
     } while (true);
 
