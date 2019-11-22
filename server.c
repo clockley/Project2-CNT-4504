@@ -41,7 +41,9 @@ void *runCommand(struct connection *c)
 
     close(newConnection);
     pclose(fp);
-    free(c);
+    if (USE_THREADS) {
+        free(c);
+    }
     free(lineptr);
     return NULL;
 }
