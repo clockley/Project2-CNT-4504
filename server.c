@@ -72,6 +72,10 @@ int main()
         return 1;
     }
     size_t sz = 0;
+    pthread_attr_t attr;
+    pthread_attr_init(&attr);
+    pthread_attr_setstacksize(&attr, PTHREAD_STACK_MIN*2);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
     while (true)
     {
         int tmp = sizeof(addressPort);
@@ -95,7 +99,7 @@ int main()
             struct connection *buf = malloc(sizeof(*buf));
             buf->handle = newConnection;
             buf->type = "exec date";
-            pthread_create(&thread, NULL, runCommand, buf);
+            pthread_create(&thread, &attr, runCommand, buf);
             pthread_detach(thread);
         }
         break;
@@ -107,7 +111,7 @@ int main()
                 struct connection *buf = malloc(sizeof(*buf));
                 buf->handle = newConnection;
                 buf->type = "exec uptime";
-                pthread_create(&thread, NULL, runCommand, buf);
+                pthread_create(&thread, &attr, runCommand, buf);
                 pthread_detach(thread);
             }
             else
@@ -124,7 +128,7 @@ int main()
                 struct connection *buf = malloc(sizeof(*buf));
                 buf->handle = newConnection;
                 buf->type = "exec free";
-                pthread_create(&thread, NULL, runCommand, buf);
+                pthread_create(&thread, &attr, runCommand, buf);
                 pthread_detach(thread);
             }
             else
@@ -141,7 +145,7 @@ int main()
                 struct connection *buf = malloc(sizeof(*buf));
                 buf->handle = newConnection;
                 buf->type = "exec netstat";
-                pthread_create(&thread, NULL, runCommand, buf);
+                pthread_create(&thread, &attr, runCommand, buf);
                 pthread_detach(thread);
             }
             else
@@ -158,7 +162,7 @@ int main()
                 struct connection *buf = malloc(sizeof(*buf));
                 buf->handle = newConnection;
                 buf->type = "exec who";
-                pthread_create(&thread, NULL, runCommand, buf);
+                pthread_create(&thread, &attr, runCommand, buf);
                 pthread_detach(thread);
             }
             else
@@ -175,7 +179,7 @@ int main()
                 struct connection *buf = malloc(sizeof(*buf));
                 buf->handle = newConnection;
                 buf->type = "exec free";
-                pthread_create(&thread, NULL, runCommand, buf);
+                pthread_create(&thread, &attr, runCommand, buf);
                 pthread_detach(thread);
             }
             else
